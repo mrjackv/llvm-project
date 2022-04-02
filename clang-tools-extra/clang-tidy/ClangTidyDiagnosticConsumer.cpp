@@ -435,10 +435,14 @@ void ClangTidyDiagnosticConsumer::HandleDiagnostic(
                         IsWarningAsError);
   }
 
+  if (Info.hasSourceManager())
+    checkFilters(Info.getLocation(), Info.getSourceManager());
+
   if (ExternalDiagEngine) {
     // If there is an external diagnostics engine, like in the
     // ClangTidyPluginAction case, forward the diagnostics to it.
-    forwardDiagnostic(Info);
+    if (LastErrorRelatesToUserCode)
+      forwardDiagnostic(Info);
   } else {
     ClangTidyDiagnosticRenderer Converter(
         Context.getLangOpts(), &Context.DiagEngine->getDiagnosticOptions(),
@@ -452,8 +456,6 @@ void ClangTidyDiagnosticConsumer::HandleDiagnostic(
                              Info.getFixItHints());
   }
 
-  if (Info.hasSourceManager())
-    checkFilters(Info.getLocation(), Info.getSourceManager());
 }
 
 bool ClangTidyDiagnosticConsumer::passesLineFilter(StringRef FileName,
