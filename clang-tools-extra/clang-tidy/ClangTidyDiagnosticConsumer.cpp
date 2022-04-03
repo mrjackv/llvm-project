@@ -481,7 +481,7 @@ void ClangTidyDiagnosticConsumer::forwardDiagnostic(const Diagnostic &Info) {
   auto DiagLevelAndFormatString =
       Context.getDiagLevelAndFormatString(Info.getID(), Info.getLocation());
   unsigned ExternalID = ExternalDiagEngine->getDiagnosticIDs()->getCustomDiagID(
-      DiagLevelAndFormatString.first, DiagLevelAndFormatString.second);
+      DiagnosticIDs::Error, DiagLevelAndFormatString.second);
 
   // Forward the details.
   auto Builder = ExternalDiagEngine->Report(Info.getLocation(), ExternalID);
